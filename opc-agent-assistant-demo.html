@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OPC.INK 智能助手演示</title>
+  <style>
+    :root { --ink:#14251e; --pine:#1f4b3e; --leaf:#49b37b; --cream:#f5f2e9; --paper:#fffdf7; --line:#d8dfd5; --muted:#607066; --warm:#f2c45c; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--cream); color:var(--ink); font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    .shell { max-width:1280px; min-height:100vh; margin:auto; padding:32px; }
+    header { display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #bfcbbf; padding-bottom:22px; gap:18px; }
+    .brand { font-size:22px; font-weight:800; letter-spacing:0; } .brand small { display:block; font-size:12px; font-weight:600; color:var(--muted); }
+    .badge { border:1px solid var(--leaf); border-radius:4px; color:var(--pine); padding:6px 10px; font-size:12px; font-weight:700; }
+    main { display:grid; grid-template-columns:1fr 420px; gap:42px; padding-top:42px; align-items:start; }
+    h1 { font-size:42px; line-height:1.15; margin:0 0 16px; max-width:640px; letter-spacing:0; } h1 em { color:var(--pine); font-style:normal; }
+    .intro { max-width:620px; color:var(--muted); font-size:17px; }
+    .flows { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:36px; }
+    .flow { min-height:166px; padding:18px; border:1px solid var(--line); border-radius:6px; background:rgba(255,253,247,.65); }
+    .flow b { display:block; margin:9px 0 6px; font-size:16px; } .flow p { color:var(--muted); margin:0; font-size:13px; } .num { color:var(--leaf); font-weight:800; }
+    .note { margin-top:26px; border-left:3px solid var(--warm); padding:12px 15px; color:#4d544d; background:#fff9e9; font-size:13px; }
+    nav { display:flex; gap:18px; } nav a { color:var(--muted); text-decoration:none; font-size:13px; } nav a:hover {color:var(--pine)}
+    .section { border-top:1px solid var(--line); margin-top:44px; padding-top:30px; } .eyebrow { color:var(--pine); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0; } h2 { font-size:28px; line-height:1.25; margin:7px 0 10px; } .section > p { color:var(--muted); max-width:690px; }
+    .score-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:20px; } .score-item { border-left:3px solid var(--leaf); background:#f2f7f0; padding:12px; } .score-item b { display:block; } .score-item span { display:block; color:var(--muted); font-size:12px; margin-top:3px; }
+    .event { display:grid; grid-template-columns:82px 1fr; gap:15px; padding:15px 0; border-bottom:1px solid var(--line); } .date { color:var(--pine); font-weight:800; font-size:13px; } .event b { display:block; } .event p { color:var(--muted); font-size:13px; margin:4px 0 0; }
+    .story { background:var(--ink); color:#fff; padding:20px; border-radius:6px; margin-top:15px; } .story p { margin:0; font-size:16px; } .story small { display:block; margin-top:14px; color:#b8d6c6; }
+    .join { background:#e6f0e4; padding:22px; border-radius:6px; } .join button { background:var(--pine); color:#fff; border:0; border-radius:4px; padding:10px 14px; font:inherit; font-weight:700; cursor:pointer; }
+    .rank-table { width:100%; border-collapse:collapse; margin-top:18px; font-size:13px; } .rank-table th { text-align:left; color:var(--muted); font-size:11px; font-weight:700; padding:8px; border-bottom:1px solid var(--line); } .rank-table td { padding:10px 8px; border-bottom:1px solid var(--line); } .rank-table a { color:var(--pine); font-weight:700; text-decoration:none; } .rank { color:var(--leaf); font-weight:800; font-size:16px; } .disclaimer { font-size:12px !important; padding:10px 12px; margin-top:14px; background:#fff9e9; color:#685326 !important; }
+    .material-list { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; padding:0; list-style:none; } .material-list li { border:1px solid var(--line); background:#fff; padding:10px; font-size:13px; } .material-list li::before { content:'✓ '; color:var(--leaf); font-weight:800; }
+    .activity-form { display:grid; gap:9px; margin-top:15px; } textarea { min-height:112px; width:100%; border:1px solid #b7c4b7; border-radius:4px; padding:9px; font:inherit; resize:vertical; outline-color:var(--leaf); } .activity-form button { justify-self:start; background:var(--pine); color:#fff; border:0; padding:9px 12px; border-radius:4px; font:inherit; cursor:pointer; } .queue { display:none; margin-top:10px; padding:10px; font-size:12px; background:#f0f7ef; border-left:3px solid var(--leaf); color:#2b493b; } .pending-list { margin:7px 0 0; padding-left:18px; } .format { color:var(--muted); font-size:12px; margin:4px 0 0; }
+    .agent { position:fixed; right:24px; bottom:24px; z-index:10; width:min(420px,calc(100vw - 40px)); background:var(--paper); border:1px solid #bdcabb; border-radius:8px; overflow:hidden; box-shadow:0 12px 28px rgba(20,37,30,.18); transition:opacity .2s,transform .2s; } .agent.closed { opacity:0; pointer-events:none; transform:translateY(16px); }
+    .assistant-toggle { position:fixed; right:24px; bottom:24px; z-index:11; display:none; border:0; border-radius:5px; padding:12px 15px; background:var(--pine); color:#fff; font:inherit; font-weight:700; box-shadow:0 8px 20px rgba(20,37,30,.24); cursor:pointer; } .assistant-toggle.show { display:block; }
+    .agent-head { padding:16px 18px; background:var(--ink); color:white; display:flex; align-items:center; gap:10px; } .dot { width:10px;height:10px;background:var(--leaf);border-radius:50%;box-shadow:0 0 0 4px rgba(73,179,123,.2); }
+    .agent-head strong { display:block; font-size:15px; } .agent-head span { font-size:12px; color:#b8d6c6; }
+    .modes { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line); }
+    .mode { border:0; border-right:1px solid var(--line); background:#fafaf4; padding:11px 5px; font:inherit; font-size:12px; color:var(--muted); cursor:pointer; } .mode:last-child{border-right:0}.mode.active{background:var(--paper);color:var(--pine);font-weight:800;box-shadow:inset 0 -2px var(--leaf);}
+    .messages { height:336px; overflow:auto; padding:17px; display:flex; flex-direction:column; gap:12px; }
+    .message { max-width:88%; padding:10px 12px; border-radius:6px; font-size:13px; } .bot { background:#ecf4ed; align-self:flex-start; } .user { background:var(--pine); color:#fff; align-self:flex-end; }
+    .quick { display:flex; flex-wrap:wrap; gap:7px; padding:0 16px 12px; } .quick button { background:#fff; border:1px solid #bdcabb; border-radius:4px; padding:6px 8px; font:inherit; font-size:12px; color:var(--pine); cursor:pointer; }
+    .composer { display:flex; border-top:1px solid var(--line); padding:11px; gap:8px; } input { min-width:0; flex:1; border:1px solid #b7c4b7; border-radius:4px; padding:9px; font:inherit; outline-color:var(--leaf); } .send { width:40px; border:0; border-radius:4px; background:var(--pine); color:white; font-size:18px; cursor:pointer; }
+    .result { display:none; margin:0 16px 13px; padding:10px; border-left:3px solid var(--leaf); background:#f0f7ef; color:#2b493b; font-size:12px; } .result.show { display:block; }
+    footer { color:var(--muted); margin-top:32px; font-size:12px; }
+    @media(max-width:850px) { .shell{padding:20px}.shell main{grid-template-columns:1fr;gap:26px;padding-top:28px} h1{font-size:32px}.flows{grid-template-columns:1fr}.agent{max-width:520px;width:100%;margin:auto} }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header><div class="brand">OPC.INK <small>一人公司联盟</small></div><nav><a href="#about">联盟</a><a href="#score">六维评分</a><a href="#board">榜单</a><a href="#events">活动</a><a href="#join">加入</a></nav><div class="badge">智能助手已上线</div></header>
+    <main>
+      <section>
+        <h1>一个入口，服务每一位<em>一人公司主理人。</em></h1>
+        <p class="intro">从访客第一次了解联盟，到提交申请后的精准对接，再到成员日常的活动、合规与工具支持，助手始终基于同一套联盟知识与服务规则。</p>
+        <div class="flows">
+          <article class="flow"><span class="num">01 / 访客</span><b>官网咨询</b><p>解答联盟权益、活动安排、加入条件与常见顾虑；把复杂信息说清楚。</p></article>
+          <article class="flow"><span class="num">02 / 申请</span><b>智能分流</b><p>引导填写关键信息，识别城市、行业与诉求，形成顾问对接摘要。</p></article>
+          <article class="flow"><span class="num">03 / 评分</span><b>六维画像</b><p>用可追溯证据呈现真原创、真 AI、真公开、真合规、真互助、真爱心。</p></article>
+        </div>
+        <p class="note">评分不应只给总分：每一维都要显示记分依据、证据状态、独立证言与可执行的补充建议。涉及税务或法律的回复应明确标注为信息指引，并转人工确认。</p>
+        <section class="section" id="about"><span class="eyebrow">关于联盟</span><h2>不是公司，是同路人凑在一起的桌子。</h2><p>OPC 产业社区联盟由一人公司主理人、AI 独立开发者与小品牌创始人共建。我们把分散在各地、独自扛事的人连成一张网：政策合规、流量互助、经验拆解和工具共享。</p></section>
+        <section class="section" id="score"><span class="eyebrow">2026 赛季评分</span><h2>六个“真”维度，一条可追溯的成长路径。</h2><p>不比估值与融资轮次，所有材料以公开过程、独立证言和可审计记录为准。</p><div class="score-grid"><div class="score-item"><b>01 真原创</b><span>原创代码、产品方法论、开源贡献或专利</span></div><div class="score-item"><b>02 真 AI</b><span>AI 在产品、服务或流程中的实际渗透深度</span></div><div class="score-item"><b>03 真公开</b><span>月报、复盘和失败记录的可追溯公开</span></div><div class="score-item"><b>04 真合规</b><span>税务、合同和申报记录的人工核验</span></div><div class="score-item"><b>05 真互助</b><span>可验证的帮带、推荐与合作转化</span></div><div class="score-item"><b>06 真爱心</b><span>社区成员一人一票的真实认可</span></div></div></section>
+        <section class="section" id="board"><span class="eyebrow">榜单 Demo</span><h2>公开信号初筛榜。</h2><p>按公开 GitHub 星标数排序，用于演示“可引用数据 → 候选池”的展示方式。点击项目名可查看数据源。</p><table class="rank-table"><thead><tr><th>排名</th><th>公开项目</th><th>GitHub Stars</th><th>下一步</th></tr></thead><tbody><tr><td class="rank">01</td><td><a href="https://github.com/langgenius/dify" target="_blank" rel="noreferrer">Dify</a></td><td>148,549</td><td>补六维材料</td></tr><tr><td class="rank">02</td><td><a href="https://github.com/lobehub/lobehub" target="_blank" rel="noreferrer">LobeHub</a></td><td>79,755</td><td>补六维材料</td></tr><tr><td class="rank">03</td><td><a href="https://github.com/CherryHQ/cherry-studio" target="_blank" rel="noreferrer">Cherry Studio</a></td><td>48,458</td><td>补六维材料</td></tr><tr><td class="rank">04</td><td><a href="https://github.com/labring/FastGPT" target="_blank" rel="noreferrer">FastGPT</a></td><td>28,909</td><td>补六维材料</td></tr></tbody></table><p class="disclaimer">说明：数据检索于 2026-07-12。此为公开数据样例，不代表 OPC 入选、真实公司身份或正式评分；正式榜单需完成资格核验、六维证据、3 份独立证言和 30 天异议期。</p></section>
+        <section class="section"><span class="eyebrow">评分申请</span><h2>申请入榜，需要这些材料。</h2><ul class="material-list"><li>公司与主理人身份、经营主体说明</li><li>原创成果：代码、产品、方法论或专利</li><li>AI 应用说明：真实流程与效果证据</li><li>公开复盘、月报或可追溯的失败记录</li><li>合规材料：申报、合同、票据留存说明</li><li>互助记录与 3 位独立证言人联系方式</li><li>真爱心由社区成员投票产生，无需自证</li><li>允许联盟存档并在异议期内公开核验</li></ul></section>
+        <section class="section" id="events"><span class="eyebrow">活动日历</span><h2>近期不能错过的几场。</h2><div class="event"><div class="date">03 / 22<br>杭州</div><div><b>OPC 主理人春季闭门会</b><p>30 位一人公司主理人的深度对谈：上午议题分享，下午一对一交流。</p></div></div><div class="event"><div class="date">03 / 29<br>深圳</div><div><b>AI 工具栈工作流之夜</b><p>选题、配图、脚本、回邮件和做账，现场拆解一人公司的 AI 全链路。</p></div></div></section>
+        <section class="section"><span class="eyebrow">合作活动入库</span><h2>把合作方活动发给助手，先进入待审核队列。</h2><p>一次可粘贴多条活动。助手会按行拆分、提取字段、提示待补信息；审核通过后才会发布到活动日历。</p><div class="activity-form"><textarea id="activityInput" placeholder="每行一条：活动名称｜时间｜城市｜主办方｜报名链接｜一句说明&#10;深圳 AI 产品圆桌｜2026-08-16 14:00｜南山｜某某社区｜https://...｜AI 产品主理人交流&#10;杭州独立开发者夜谈｜2026-08-22 19:30｜西湖区｜开发者社区｜https://...｜产品复盘与合作"></textarea><p class="format">格式：活动名称｜时间｜城市｜主办方｜报名链接｜一句说明</p><button id="queueActivity">批量提交待审核</button></div><div class="queue" id="queue"></div></section>
+        <section class="section"><span class="eyebrow">成员故事</span><h2>真实数据，真实人，真实进度。</h2><div class="story"><p>“一个人做生意最难的从来不是做，是让人知道你还在做。”</p><small>Y. 杭州 · AI 知识库工具 · 加入联盟后获得首个渠道合作</small></div></section>
+        <section class="section join" id="join"><span class="eyebrow">申请加入</span><h2>说说你和你的公司，我们 48 小时内回你。</h2><p>助手会先帮你梳理业务、城市和首要诉求，再推荐相应顾问、小群与活动。</p><button onclick="document.querySelector('[data-mode=apply]').click()">开始申请</button></section>
+      </section>
+      <aside class="agent closed" id="agent" aria-label="OPC 智能助手">
+        <div class="agent-head"><i class="dot"></i><div><strong>OPC 联盟助手</strong><span id="status">在线 · 为访客解答</span></div><button id="closeAgent" aria-label="收起智能助手" style="margin-left:auto;border:0;background:transparent;color:#fff;font-size:18px;cursor:pointer">×</button></div>
+        <div class="modes"><button class="mode active" data-mode="visitor">了解联盟</button><button class="mode" data-mode="apply">申请加入</button><button class="mode" data-mode="member">成员服务</button><button class="mode" data-mode="score">六维评分</button></div>
+        <div class="messages" id="messages"></div>
+        <div class="result" id="result"></div>
+        <div class="quick" id="quick"></div>
+        <div class="composer"><input id="input" placeholder="输入你的问题..." aria-label="输入消息"><button class="send" id="send" aria-label="发送">↑</button></div>
+      </aside>
+    </main>
+    <button class="assistant-toggle show" id="assistantToggle">OPC 智能助手</button>
+    <footer>OPC.INK 智能助手概念验证 · 对话仅为演示，不收集或提交真实个人信息。</footer>
+  </div>
+  <script>
+    const data={
+      visitor:{status:'在线 · 为访客解答',welcome:'你好，我是 OPC 联盟助手。可以帮你了解加入方式、联盟权益和近期活动。',quick:['加入需要收费吗？','最近有什么活动？','联盟适合我吗？'],answers:{'加入需要收费吗？':'联盟免费加入，不收会费、不卖课。我们更看重你是否正在做事，并愿意分享真实经验。','最近有什么活动？':'近期有杭州主理人闭门会、线上“小规模免税新政”圆桌，以及深圳 AI 工具栈工作流之夜。你所在城市是？','联盟适合我吗？':'如果你是一人公司主理人、AI 独立开发者或小品牌创始人，并希望获得同行连接、合规指引和互推机会，这里很适合你。'}},
+      apply:{status:'申请分流 · 正在收集需求',welcome:'我会用几句话了解你的业务，并帮你整理申请摘要。先告诉我：你在哪个城市、做什么行业？',quick:['杭州，AI 知识库工具','深圳，独立开发 SaaS','成都，个人品牌咨询'],answers:{'杭州，AI 知识库工具':'已识别：杭州 · AI / 大模型应用。你更希望获得同城互推、渠道资源，还是合规和经营支持？','深圳，独立开发 SaaS':'已识别：深圳 · SaaS 工具。你目前最需要的是获客、产品交流，还是公司合规支持？','成都，个人品牌咨询':'已识别：成都 · 个人品牌 / 咨询。你更想链接同行、参加活动，还是获取内容与工具支持？'}},
+      member:{status:'成员服务 · 已连接联盟资源',welcome:'欢迎回来。告诉我你想查活动、合规节点、工具模板，还是寻找同城同行？',quick:['本月合规节点','找杭州 AI 同行','AI 工具模板'],answers:{'本月合规节点':'本月建议重点确认：申报资料是否齐全、开票节奏是否接近临界值。具体税务判断请与联盟财务顾问确认。','找杭州 AI 同行':'可以为你生成杭州 · AI / 大模型应用的小群匹配请求，并附上你的业务简介与合作诉求。','AI 工具模板':'可优先推荐选题、客服、内容脚本和邮件处理四类工作流模板。你想先解决哪一个环节？'}},
+      score:{status:'六维评分 · 证据优先',welcome:'我会先做六维预评估。请从一项开始：你有哪些可以验证的原创、AI 应用、公开复盘、合规、互助或社区认可证据？',quick:['查看六维评分规则','开始我的预评估','我缺少合规证据'],answers:{'查看六维评分规则':'六维分别是：真原创、真 AI、真公开、真合规、真互助、真爱心。每一维以可追溯材料记分；上榜还需 3 份独立证言，并经历 30 天异议期。','开始我的预评估':'预评估将按六维逐项收集材料。请先提交一条可验证的原创或产品证据，例如公开代码、产品方法论或专利说明。','我缺少合规证据':'真合规是底线维度。先整理申报记录、合同与票据留存；材料准备好后由联盟顾问核验，助手不会替代财税判断。'}};
+    let mode='visitor'; const box=document.querySelector('#messages'), quick=document.querySelector('#quick'), input=document.querySelector('#input'), result=document.querySelector('#result');
+    function add(text,type='bot'){const e=document.createElement('div');e.className='message '+type;e.textContent=text;box.append(e);box.scrollTop=box.scrollHeight;}
+    function start(){box.innerHTML='';result.className='result';document.querySelector('#status').textContent=data[mode].status;add(data[mode].welcome);quick.innerHTML='';data[mode].quick.forEach(q=>{const b=document.createElement('button');b.textContent=q;b.onclick=()=>reply(q);quick.append(b)});}
+    function reply(q){add(q,'user'); const answer=data[mode].answers[q]||'我明白了。为了给你更准确的建议，可以补充你的城市、业务阶段和最希望解决的一件事。'; setTimeout(()=>{add(answer);if(mode==='apply'){result.textContent='申请摘要已生成：将按城市、行业和首要诉求推荐对应的顾问与小群。';result.className='result show';}if(mode==='score'&&q==='开始我的预评估'){result.textContent='预评估路径：真原创 → 真 AI → 真公开 → 真合规 → 真互助 → 真爱心。每项将标注“已验证 / 待补充 / 需人工核验”。';result.className='result show';}},240);}
+    document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{document.querySelector('.mode.active').classList.remove('active');b.classList.add('active');mode=b.dataset.mode;start();});
+    document.querySelector('#send').onclick=()=>{const q=input.value.trim();if(q){reply(q);input.value='';}}; input.onkeydown=e=>{if(e.key==='Enter')document.querySelector('#send').click()}; document.querySelector('#queueActivity').onclick=()=>{const raw=document.querySelector('#activityInput').value.trim(); if(!raw){document.querySelector('#activityInput').focus();return;} const rows=raw.split(/\n+/).filter(Boolean).map(x=>x.split('｜').map(y=>y.trim())); const valid=rows.filter(x=>x.length>=5); const incomplete=rows.length-valid.length; document.querySelector('#queue').innerHTML='已将 <b>'+valid.length+'</b> 条活动放入待审核队列'+(incomplete?'；另有 '+incomplete+' 条字段不足，请补齐时间、城市、主办方和链接。':'。')+'<ul class="pending-list">'+valid.slice(0,5).map(x=>'<li>'+x[0]+' · '+x[1]+' · '+x[2]+'</li>').join('')+'</ul>'; document.querySelector('#queue').style.display='block';}; const agent=document.querySelector('#agent'),toggle=document.querySelector('#assistantToggle'); document.querySelector('#closeAgent').onclick=()=>{agent.classList.add('closed');toggle.classList.add('show')}; toggle.onclick=()=>{agent.classList.remove('closed');toggle.classList.remove('show')}; start();
+  </script>
+</body>
+</html>
