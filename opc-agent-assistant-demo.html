@@ -63,7 +63,19 @@
         <section class="section" id="events"><span class="eyebrow">活动日历</span><h2>近期不能错过的几场。</h2><div class="event"><div class="date">03 / 22<br>杭州</div><div><b>OPC 主理人春季闭门会</b><p>30 位一人公司主理人的深度对谈：上午议题分享，下午一对一交流。</p></div></div><div class="event"><div class="date">03 / 29<br>深圳</div><div><b>AI 工具栈工作流之夜</b><p>选题、配图、脚本、回邮件和做账，现场拆解一人公司的 AI 全链路。</p></div></div></section>
         <section class="section"><span class="eyebrow">合作活动入库</span><h2>把合作方活动发给助手，先进入待审核队列。</h2><p>一次可粘贴多条活动。助手会按行拆分、提取字段、提示待补信息；审核通过后才会发布到活动日历。</p><div class="activity-form"><textarea id="activityInput" placeholder="每行一条：活动名称｜时间｜城市｜主办方｜报名链接｜一句说明&#10;深圳 AI 产品圆桌｜2026-08-16 14:00｜南山｜某某社区｜https://...｜AI 产品主理人交流&#10;杭州独立开发者夜谈｜2026-08-22 19:30｜西湖区｜开发者社区｜https://...｜产品复盘与合作"></textarea><p class="format">格式：活动名称｜时间｜城市｜主办方｜报名链接｜一句说明</p><button id="queueActivity">批量提交待审核</button></div><div class="queue" id="queue"></div></section>
         <section class="section"><span class="eyebrow">成员故事</span><h2>真实数据，真实人，真实进度。</h2><div class="story"><p>“一个人做生意最难的从来不是做，是让人知道你还在做。”</p><small>Y. 杭州 · AI 知识库工具 · 加入联盟后获得首个渠道合作</small></div></section>
-        <section class="section join" id="join"><span class="eyebrow">申请加入</span><h2>说说你和你的公司，我们 48 小时内回你。</h2><p>助手会先帮你梳理业务、城市和首要诉求，再推荐相应顾问、小群与活动。</p><button onclick="document.querySelector('[data-mode=apply]').click()">开始申请</button></section>
+        <section class="section join" id="join"><span class="eyebrow">申请加入</span><h2>说说你和你的公司，我们 48 小时内回你。</h2><p>OPC.INK 免费加入，不收会费、不卖课。我们更看重你是否正在真实做事、愿意分享真实经验。</p>
+          <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;margin-top:16px">
+            <div style="text-align:center">
+              <img src="join-qr.png" alt="扫码加入 OPC.INK" style="width:180px;height:180px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+              <div style="display:none;width:180px;height:180px;line-height:180px;background:#fff;border:1px dashed var(--pine);border-radius:8px;color:var(--muted);font-size:13px">二维码待上传<br>(join-qr.png)</div>
+              <div style="margin-top:8px;font-size:13px;color:var(--pine);font-weight:700">扫码加入 / 添加主理人</div>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <p style="margin:0 0 12px">扫描左侧二维码，或先和助手聊聊你的业务、城市与首要诉求，我们会推荐对应的顾问、小群与活动。</p>
+              <button onclick="document.querySelector('[data-mode=apply]').click()">先和助手聊聊</button>
+            </div>
+          </div>
+        </section>
       </section>
       <aside class="agent closed" id="agent" aria-label="OPC 智能助手">
         <div class="agent-head"><i class="dot"></i><div><strong>OPC 联盟助手</strong><span id="status">在线 · 为访客解答</span></div><button id="closeAgent" aria-label="收起智能助手" style="margin-left:auto;border:0;background:transparent;color:#fff;font-size:18px;cursor:pointer">×</button></div>
@@ -75,7 +87,7 @@
       </aside>
     </main>
     <button class="assistant-toggle show" id="assistantToggle">OPC 智能助手</button>
-    <footer>OPC.INK 智能助手概念验证 · 对话仅为演示，不收集或提交真实个人信息。</footer>
+    <footer>OPC.INK · 一人公司联盟 &nbsp;|&nbsp; 免费加入，不收会费、不卖课 &nbsp;|&nbsp; 页面对话为智能助手演示，正式加入请扫码。</footer>
   </div>
   <script>
     const data={
