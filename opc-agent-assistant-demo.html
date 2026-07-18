@@ -103,5 +103,18 @@
     document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{document.querySelector('.mode.active').classList.remove('active');b.classList.add('active');mode=b.dataset.mode;start();});
     document.querySelector('#send').onclick=()=>{const q=input.value.trim();if(q){reply(q);input.value='';}}; input.onkeydown=e=>{if(e.key==='Enter')document.querySelector('#send').click()}; document.querySelector('#queueActivity').onclick=()=>{const raw=document.querySelector('#activityInput').value.trim(); if(!raw){document.querySelector('#activityInput').focus();return;} const rows=raw.split(/\n+/).filter(Boolean).map(x=>x.split('｜').map(y=>y.trim())); const valid=rows.filter(x=>x.length>=5); const incomplete=rows.length-valid.length; document.querySelector('#queue').innerHTML='已将 <b>'+valid.length+'</b> 条活动放入待审核队列'+(incomplete?'；另有 '+incomplete+' 条字段不足，请补齐时间、城市、主办方和链接。':'。')+'<ul class="pending-list">'+valid.slice(0,5).map(x=>'<li>'+x[0]+' · '+x[1]+' · '+x[2]+'</li>').join('')+'</ul>'; document.querySelector('#queue').style.display='block';}; const agent=document.querySelector('#agent'),toggle=document.querySelector('#assistantToggle'); document.querySelector('#closeAgent').onclick=()=>{agent.classList.add('closed');toggle.classList.add('show')}; toggle.onclick=()=>{agent.classList.remove('closed');toggle.classList.remove('show')}; start();
   </script>
+  <script>
+    const waicBoard=document.querySelector('#board');
+    if(waicBoard){
+      const waicLabel=waicBoard.querySelector('.eyebrow');
+      const waicTitle=waicBoard.querySelector('h2');
+      if(waicLabel) waicLabel.textContent='WAIC 硬科技雷达 · 10 家';
+      if(waicTitle) waicTitle.textContent='展商观察，不计入 OPC 六维榜。';
+      const opc=document.createElement('section');
+      opc.className='section'; opc.id='opc-candidates';
+      opc.innerHTML='<span class="eyebrow">OPC 六维应用候选 · 征集中</span><h2>先看证据，再谈排名。</h2><p>OPC 优先关注真实 AI 应用、小团队与一人公司。候选须依次提交原创、AI 应用、公开过程、合规、互助和社区认可的可核验证据；资料不足时只进入观察池，不进入排名。</p><div class="score-grid"><div class="score-item"><b>真原创</b><span>产品、代码、方法论或案例</span></div><div class="score-item"><b>真 AI</b><span>实际场景与使用效果</span></div><div class="score-item"><b>真公开</b><span>公开页面、复盘或客户案例</span></div><div class="score-item"><b>真合规</b><span>主体与经营资料待人工核验</span></div><div class="score-item"><b>真互助</b><span>合作、推荐或行业贡献</span></div><div class="score-item"><b>真爱心</b><span>社群投票与真实反馈</span></div></div><p class="disclaimer">正式 OPC 榜单不会根据展会出现、融资消息或单一热度指标直接排名。先从应用型企业开始，完成六维材料后再入榜。</p>';
+      waicBoard.parentNode.insertBefore(opc,waicBoard);
+    }
+  </script>
 </body>
 </html>
